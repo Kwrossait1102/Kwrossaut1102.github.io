@@ -935,7 +935,11 @@ layout: blank
       </p>
       
       <p class="body-text">
-        For example, in the first round, the user says, "Highlight the man with the white hoodie," and the assistant answers, "It is <code>[SEG]</code>." In the second round, the LLM can only see these two text messages. However, <code>[SEG]</code> is just a fixed special token. It is always the same and does not contain any information about the selected person's position, shape, or mask. The actual segmentation mask is generated later by the decoder and is not saved in the conversation history. As a result, the model only knows what the user asked it to segment. It does not know which person was actually segmented or whether the result was correct. Therefore, when the user later says something like "the person behind him," the model does not know who "him" refers to. To give the model real memory of the previous round, the segmentation mask itself must be added back to the model's input. This is what SegLLM does.
+        For example, in the first round, the user says, "Highlight the man with the white hoodie," and the assistant answers, "It is <code>[SEG]</code>." In the second round, the LLM can only see these two text messages. However, <code>[SEG]</code> is just a fixed special token. It is always the same and does not contain any information about the selected person's position, shape, or mask. The actual segmentation mask is generated later by the decoder and is not saved in the conversation history.
+      </p>
+        
+      <p class="body-text">  
+       As a result, the model only knows what the user asked it to segment. It does not know which person was actually segmented or whether the result was correct. Therefore, when the user later says something like "the person behind him," the model does not know who "him" refers to. To give the model real memory of the previous round, the segmentation mask itself must be added back to the model's input. This is what SegLLM does.
       </p>
 
       <!-- ── Section 2 ── -->
