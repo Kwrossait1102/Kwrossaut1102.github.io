@@ -686,15 +686,15 @@ layout: blank
       </p>
 
       <p class="body-text">
-        In a clinical scenario, a doctor rarely asks just one question and stops. They work through a series of steps: first locating a tumour, then checking the surrounding vasculature, then isolating a specific organ. This process is naturally <em>multi-round</em>, and the result of one segmentation step is almost always the starting point for the next.
+        In a clinical scenario, a doctor rarely asks just one question and stops. They work through a series of steps: first locating a tumour, then checking the surrounding vasculature, finally isolating a specific organ. Each step depends on the previous segmentation result, so the process is naturally <em>multi-round</em>.
       </p>
 
       <p class="body-text">
-        The problem is that existing tools treat each query independently. Every time a user asks a new question, they have to re-establish the full context from scratch. This is especially frustrating in medical settings, where anatomical structures are closely related. Bridging this gap, <em>giving models memory of previous rounds</em>, is what this post is about.
+        The problem is that existing tools treat each query independently. Every time a user asks a new question, they have to re-establish the full context from scratch. This is especially frustrating in medical settings, where anatomical structures are closely related. This post explains how SegLLM gives the model access to previous segmentation results.
       </p>
 
       <p class="body-text">
-        The rest of this post is organised as follows. Section 1 sets up what image segmentation is and why current LLM-based models cannot handle follow-up queries. Section 2 walks through SegLLM's architecture and its two core changes: the mask encoding module and the mask-aware decoder. Section 3 covers the training data and setup, Section 4 presents the results, and Section 5 shares our own critique of the paper.
+        We first explain the problem, then introduce SegLLM's architecture, training setup, results, limitations and possible solutions.
       </p>
 
       <!-- ── Section 1 ── -->
@@ -711,11 +711,11 @@ layout: blank
       </div>
 
       <p class="body-text">
-        Image segmentation divides an image into regions at pixel resolution [2]. A model given a photo and some indication of what to look for returns the exact set of pixels the target object covers.
+        Image segmentation identifies the pixels that belong to a target object or region [2].
       </p>
 
       <p class="body-text">
-        Models that do this are almost all built on deep learning, and they all have the same three parts: an encoder for the image, an encoder for whatever tells the model <em>what</em> to segment, and a decoder that turns the two into a mask. What varies between methods is the second part, the <strong>prompt</strong>.
+        Models that do this are almost all built on deep learning, and they all have the same three parts: an encoder for the image, an encoder for whatever tells the model <em>what</em> to segment, and a decoder that turns the two into a mask. The main difference between methods is the <em>type of prompt</em> they use.
       </p>
         
       <svg viewBox="0 0 780 300" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; margin: 1.3rem 0; font-family: 'Inter', sans-serif;">
@@ -770,7 +770,7 @@ layout: blank
       </p>
 
       <p class="body-text">
-        <strong>MaskFormer</strong> [3] was the first to fit the different kinds of segmentation task into this recipe, borrowing the transformer's "query" mechanism: a fixed set of <em>learned</em> queries, with no user prompt at all, each predicting one mask and its category.
+        <strong>MaskFormer</strong> [3] uses a fixed set of learned queries. Each query predicts one mask and its category, without any user input.
       </p>
 
       <p class="body-text">
@@ -807,7 +807,7 @@ layout: blank
           <div class="info-card-label">Reasoning Query</div>
           <div class="info-card-body">
             <span style="display: block; font-style: italic; color: var(--text-1); font-weight: 600; margin-bottom: 8px;">"Segment the food that is high in Vitamin C."</span>
-            The target object is never named. The model first has to recall, using its general world knowledge, which foods are rich in Vitamin C, and only then can it work out which object in the image that description points to.
+            The target is not named directly. The model must know which food is rich in Vitamin C and then locate it in the image.
           </div>
         </div>
         <div class="info-card">
@@ -820,7 +820,7 @@ layout: blank
       </div>
 
       <p class="body-text">
-        Given a click on the orange, SAM will trace it perfectly. What it has no way to do is turn "the food that is high in Vitamin C" into that click, and it has no mechanism at all for reasoning about relationships between objects, as the third example requires. That resolving step, working out <em>which</em> object a description refers to before any segmentation happens, is what <strong>reasoning segmentation</strong> adds. More formally: given an implicit natural language query, the model must reason about image content to understand relationships, context, and intent before producing a mask [7].
+        SAM can segment the orange if the user provides a click. However, it cannot infer that “the food that is high in Vitamin C” refers to the orange, or understand a target described through its relationship to another object. Reasoning segmentation adds this inference step: the model first identifies which object the query refers to and then produces its mask [7].
       </p>
 
       <p class="body-text">
@@ -1657,7 +1657,7 @@ layout: blank
       </div>
 
       <p class="body-text">
-        Together with the ordering issue, this leaves an unresolved question: is the model taking shortcuts from training data statistics, or does it fail to compose the query at all? The paper's evaluation does not separate these two. Either way, the model currently cannot meet the medical imaging segmentation requirements we described at the beginning of this post.
+        Together with the ordering issue, there is a obvious question: does the model understand the full query, or does it mainly rely on common words and prompt patterns? The paper's evaluation does not separate these two cases and doesn't provide a clear answer. Based on the problems described above, SegLLM is not reliable enough for medical image segmentation.
       </p>
 
       <div class="config-grid" style="grid-template-columns: 1fr; max-width: 560px; margin: 1.8rem auto;">
