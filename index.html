@@ -711,13 +711,13 @@ layout: blank
       </div>
 
       <p class="body-text">
-        Image segmentation labels every pixel in an image [2]. Asked to segment the dog in a photo, a model returns the exact set of pixels the dog occupies, tracing its outline at pixel resolution.
+        Image segmentation divides an image into regions at pixel resolution [2]. A model given a photo and some indication of what to look for returns the exact set of pixels the target object covers.
       </p>
 
       <p class="body-text">
         Models that do this are almost all built on deep learning, and they converge on a shared three-part recipe: an encoder for the image, an encoder for whatever tells the model <em>what</em> to segment, and a decoder that fuses the two into a mask. What varies between methods is the second part, the <strong>prompt</strong>.
       </p>
-
+        
       <svg viewBox="0 0 780 300" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; margin: 1.3rem 0; font-family: 'Inter', sans-serif;">
         <defs>
           <marker id="arrow-1-3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
