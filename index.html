@@ -914,11 +914,7 @@ layout: blank
       </div>
 
       <p class="body-text">
-        The LLM in Figure 2 only ever sees each query once. Once a mask is generated, the model has no memory of it, and users cannot follow up with queries that reference previous segmentation outputs.
-      </p>
-
-      <p class="body-text">
-        In Figure 2, information only flows in one direction: the image and text go into the LLM, the LLM emits a <code>[SEG]</code> token, and the mask decoder turns that into a mask. Once the mask decoder has produced its output, the pipeline is finished. No path exists for that mask, or any other trace of what just happened, to flow back into the LLM. So if a user asks a follow-up question that depends on the previous result, the LLM cannot access what it just segmented, and it has no record that a previous round of segmentation even took place. Supporting multi-round reasoning would require exactly this feedback path, which Figure 2 does not have.
+        In Figure 2, information flows in one direction only: image and text go into the LLM, the LLM emits a [SEG] token, the mask decoder turns that into a mask, and the pipeline ends. Nothing carries the mask, or any trace of it, back into the LLM. So a user cannot ask a follow-up that depends on the previous result, the model has no access to what it just segmented, and no record that an earlier round happened at all.
       </p>
 
       <div class="callout">
