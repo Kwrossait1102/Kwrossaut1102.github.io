@@ -1289,7 +1289,7 @@ layout: blank
       </div>
 
       <p class="body-text">
-        Only the <strong>LLM</strong> and the <strong>projection layer</strong> are trained. Every other component (the image encoder, the mask encoder, and the mask decoder) uses a pre-trained model with its parameters kept completely frozen. The training below therefore teaches the LLM to reason correctly and to emit the right tokens at the right time. Seeing and mask-drawing are already handled by the frozen components.
+        Only the <strong>LLM</strong> and the <strong>projection layer</strong> are trained. Every other component (the image encoder, the mask encoder, and the mask decoder) uses a pre-trained model with its parameters kept completely frozen. The training below therefore teaches the LLM to reason correctly and to emit the right tokens at the right time. The frozen encoders and decoder already handle visual feature extraction and mask generation.
       </p>
 
       <p class="body-text">
@@ -1320,7 +1320,7 @@ layout: blank
       </p>
 
       <p class="body-text">
-        At training time, the ground-truth mask and box embeddings are inserted after each <code>[SEG]</code> token, in place of the model's own predictions. This is called <strong>teacher forcing</strong>, and it is standard practice for training sequence models: it stops small early mistakes from throwing off everything that follows, so the model always learns from a clean, correct history. At inference time no ground truth is available, so the model feeds its own previous outputs back in.
+        At training time, the ground-truth mask and box embeddings are inserted after each <code>[SEG]</code> token, in place of the model's own predictions. This is called <strong>teacher forcing</strong>. It stops small early mistakes from throwing off everything that follows, so the model always learns from a clean, correct history. At inference time no ground truth is available, so the model feeds its own previous outputs back in.
       </p>
 
       <p class="body-text">
