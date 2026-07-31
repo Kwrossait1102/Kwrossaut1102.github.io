@@ -914,7 +914,7 @@ layout: blank
       </div>
 
       <p class="body-text">
-        In Figure 2, information flows in one direction only: image and text go into the LLM, the LLM emits a [SEG] token, the mask decoder turns that into a mask, and the pipeline ends. Nothing carries the mask, or any trace of it, back into the LLM. So a user cannot ask a follow-up that depends on the previous result, the model has no access to what it just segmented, and no record that an earlier round happened at all.
+        In Figure 2, information flows in one direction only: image and text go into the LLM, the LLM emits a <code>[SEG]</code> token, the mask decoder turns that into a mask, and the pipeline ends. Nothing carries the mask, or any trace of it, back into the LLM. So a user cannot ask a follow-up that depends on the previous result, the model has no access to what it just segmented, and no record that an earlier round happened at all.
       </p>
 
       <div class="callout">
@@ -931,7 +931,11 @@ layout: blank
       </p>
 
       <p class="body-text">
-        The main problem is that normal conversation history only stores text. It does not store the segmentation result from the previous round. For example, in the first round, the user says, “Highlight the man with the white hoodie,” and the assistant answers, “It is [SEG].” In the second round, the LLM can only see these two text messages. However, [SEG] is just a fixed special token. It is always the same and does not contain any information about the selected person’s position, shape, or mask. The actual segmentation mask is generated later by the decoder and is not saved in the conversation history. As a result, the model only knows what the user asked it to segment. It does not know which person was actually segmented or whether the result was correct. Therefore, when the user later says something like “the person behind him,” the model does not know who “him” refers to. To give the model real memory of the previous round, the segmentation mask itself must be added back to the model’s input. This is what SegLLM does.
+        The main problem is that normal conversation history only stores text. It does not store the segmentation result from the previous round.
+      </p>
+      
+      <p class="body-text">
+        For example, in the first round, the user says, "Highlight the man with the white hoodie," and the assistant answers, "It is <code>[SEG]</code>." In the second round, the LLM can only see these two text messages. However, <code>[SEG]</code> is just a fixed special token. It is always the same and does not contain any information about the selected person's position, shape, or mask. The actual segmentation mask is generated later by the decoder and is not saved in the conversation history. As a result, the model only knows what the user asked it to segment. It does not know which person was actually segmented or whether the result was correct. Therefore, when the user later says something like "the person behind him," the model does not know who "him" refers to. To give the model real memory of the previous round, the segmentation mask itself must be added back to the model's input. This is what SegLLM does.
       </p>
 
       <!-- ── Section 2 ── -->
